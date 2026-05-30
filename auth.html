@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNEMOXIS | Access Protocol v1.2</title>
+    <title>MNEMOXIS | Access Protocol v1.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="src/style.css">
@@ -37,45 +37,63 @@
         </div>
 
         <div class="space-y-4">
-            <input id="email" type="email" placeholder="Neural ID (stefymaestro@gmail.com)" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-cyan-500">
-            <input id="password" type="password" placeholder="Access Key" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-cyan-500">
+            <input id="email" type="email" placeholder="Email" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-cyan-500">
+            <input id="password" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-cyan-500">
             
-            <button onclick="login()" id="loginBtn" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-4 rounded-xl text-sm tracking-widest mt-4">
+            <button onclick="handleAuth('login')" id="loginBtn" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-4 rounded-xl text-sm tracking-widest mt-4">
                 INITIALIZE SESSION
+            </button>
+
+            <button onclick="handleAuth('signup')" class="w-full bg-white/5 border border-white/10 text-gray-400 py-2 rounded-xl text-[10px] tracking-widest hover:text-white transition-all">
+                CREATE NEW NEURAL ID
             </button>
         </div>
 
-        <div id="error-box" class="hidden mt-6 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-xs font-bold uppercase"></div>
+        <div id="status-box" class="hidden mt-6 p-3 rounded-lg text-xs font-bold uppercase"></div>
         
         <div class="mt-10 text-[10px] text-gray-500 uppercase tracking-widest">
-            OWNER: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="12616677746b7f73776166607d52757f737b7e3c717d7f">[email&#160;protected]</a>
+            OWNER: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="89fafdeceff0e4e8ecfafdfbe6c9eee4e8e0e5a7eae6e4">[email&#160;protected]</a>
         </div>
     </div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-        const SUPABASE_URL = 'https://idzpjqfhahxitbapvehr.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlkenBqcWZoYWh4aXRiYXB2ZWhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1NzkwMzksImV4cCI6MjA5NTE1NTAzOX0.58PlO-5CkJtZx4dYUixM1kpkbMY_nnQCF1Rd3BvzNV8';
+        // UPDATED PROJECT KEYS
+        const SUPABASE_URL = 'https://hstlpjycusjtfjfbjecq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzdGxwanljdXNqdGZqZmJqZWNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNDI1NjMsImV4cCI6MjA5NTE1NTAzOX0.58PlO-5CkJtZx4dYUixM1kpkbMY_nnQCF1Rd3BvzNV8';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        async function login() {
+        async function handleAuth(type) {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const btn = document.getElementById('loginBtn');
-            const errBox = document.getElementById('error-box');
+            const statusBox = document.getElementById('status-box');
 
-            btn.innerText = "VERIFYING...";
-            errBox.classList.add('hidden');
+            statusBox.className = "mt-6 p-3 rounded-lg text-xs font-bold uppercase bg-cyan-500/20 text-cyan-400";
+            statusBox.innerText = type === 'login' ? "AUTHENTICATING..." : "CREATING IDENTITY...";
+            statusBox.classList.remove('hidden');
 
-            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-
-            if (error) {
-                errBox.innerText = error.message;
-                errBox.classList.remove('hidden');
-                btn.innerText = "INITIALIZE SESSION";
+            if (type === 'login') {
+                const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+                if (error) {
+                    showError(error.message);
+                } else {
+                    window.location.href = 'index.html';
+                }
             } else {
-                window.location.href = 'index.html';
+                const { data, error } = await _supabase.auth.signUp({ email, password });
+                if (error) {
+                    showError(error.message);
+                } else {
+                    statusBox.innerText = "ID CREATED! TRY LOGGING IN.";
+                }
             }
         }
+
+        function showError(msg) {
+            const statusBox = document.getElementById('status-box');
+            statusBox.className = "mt-6 p-3 rounded-lg text-xs font-bold uppercase bg-red-500/20 text-red-400";
+            statusBox.innerText = msg;
+        }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a03e3a3cfb9d1e42',t:'MTc4MDE0OTIzMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a03e87c219821e42',t:'MTc4MDE1MjQwNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
