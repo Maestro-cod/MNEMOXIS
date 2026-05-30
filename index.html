@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNEMOXIS | Spatial Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="src/style.css">
+    <style>
+        @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fade-in 0.5s ease-out forwards; }
+    </style>
+</head>
+<body>
+
+    <div id="listening-indicator" class="pulse">AMBIENT SENSORS ACTIVE</div>
+
+    <!-- UI Overlay -->
+    <div id="ui-layer" class="fixed inset-0 pointer-events-none flex flex-col p-8">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-start interactive pointer-events-auto">
+            <div class="flex flex-col">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 glass rounded-full flex items-center justify-center border-cyan-500/50 border relative">
+                        <div class="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping"></div>
+                        <div class="w-6 h-6 bg-cyan-400 rounded-sm rotate-45"></div>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold font-future tracking-tighter neon-glow bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
+                            MNEMOXIS
+                        </h1>
+                        <p class="text-[10px] tracking-[4px] text-cyan-500/60 font-bold">NEURAL SPATIAL OS</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button onclick="toggleVoice()" class="glass px-6 py-2 rounded-full text-[10px] font-bold tracking-widest hover:border-cyan-500 transition-all text-cyan-400">
+                    VOICE SYNC
+                </button>
+                <button class="neon-button px-8 py-2 rounded-full text-[10px] font-bold tracking-widest">
+                    UPGRADE
+                </button>
+            </div>
+        </header>
+
+        <!-- Workspace -->
+        <div class="flex-1 flex justify-between mt-12 overflow-hidden">
+            
+            <!-- Left: Task Stream -->
+            <div class="w-80 flex flex-col gap-6 pointer-events-auto">
+                <div class="glass p-6 rounded-3xl border-l-4 border-l-cyan-500">
+                    <p class="text-[10px] text-gray-500 font-bold tracking-widest mb-4">NEURAL INPUT</p>
+                    <div class="relative">
+                        <input id="taskInput" type="text" placeholder="Express a thought..." 
+                               class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm focus:outline-none focus:border-cyan-500/50 transition-all font-light italic">
+                        <button onclick="addTaskAction()" class="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400 hover:scale-110 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex-1 glass p-6 rounded-3xl overflow-hidden flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <p class="text-[10px] text-gray-500 font-bold tracking-widest uppercase">Active Nebula</p>
+                        <span class="text-[10px] bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded">3 Nodes</span>
+                    </div>
+                    <div id="taskList" class="flex-1 overflow-y-auto space-y-3 pr-2">
+                        <!-- Tasks inject here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: System Metrics -->
+            <div class="w-64 flex flex-col gap-4 pointer-events-auto">
+                <div class="glass p-5 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-cyan-500/10 blur-2xl group-hover:bg-cyan-500/20 transition-all"></div>
+                    <p class="text-[9px] text-gray-500 font-bold tracking-widest uppercase">Coherent focus</p>
+                    <div class="text-2xl font-future mt-2 text-cyan-100">88.4%</div>
+                    <div class="h-1 w-full bg-white/5 mt-3 rounded-full overflow-hidden">
+                        <div class="h-full bg-cyan-500 w-[88%] shadow-[0_0_10px_#00d2ff]"></div>
+                    </div>
+                </div>
+
+                <div class="glass p-5 rounded-2xl">
+                    <p class="text-[9px] text-gray-400 font-bold tracking-widest uppercase">Spatial Clusters</p>
+                    <div class="flex gap-2 mt-4">
+                        <div class="flex-1 h-12 bg-white/5 rounded-lg border border-white/5 flex flex-col items-center justify-center">
+                            <span class="text-xs font-bold text-cyan-400">01</span>
+                            <span class="text-[7px] text-gray-500 uppercase">Work</span>
+                        </div>
+                        <div class="flex-1 h-12 bg-white/5 rounded-lg border border-white/5 flex flex-col items-center justify-center">
+                            <span class="text-xs font-bold text-pink-500">02</span>
+                            <span class="text-[7px] text-gray-500 uppercase">Personal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-auto glass p-6 rounded-3xl border-t border-white/10 text-center">
+                    <p class="text-[10px] text-gray-500 mb-2 uppercase tracking-tighter">Current Plan</p>
+                    <p class="text-xs font-bold text-white uppercase">ARCHITECT TIER</p>
+                    <div class="mt-4 text-[9px] text-cyan-400/50 font-bold cursor-pointer hover:text-cyan-400">MANAGE ORBIT →</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>

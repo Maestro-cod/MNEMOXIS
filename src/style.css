@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Orbitron:wght@400;700&display=swap');
+
+:root {
+    --cyan: #00d2ff;
+    --blue: #3a7bd5;
+    --dark: #020205;
+    --glass: rgba(15, 15, 25, 0.7);
+}
+
+body {
+    margin: 0;
+    background: var(--dark);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+}
+
+.font-future { font-family: 'Orbitron', sans-serif; }
+
+.glass {
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+.neon-glow {
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+}
+
+.neon-button {
+    background: linear-gradient(90deg, var(--cyan), var(--blue));
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    transition: all 0.3s ease;
+}
+
+.neon-button:hover {
+    box-shadow: 0 0 25px rgba(0, 210, 255, 0.7);
+    transform: translateY(-2px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 10px; }
+
+#listening-indicator {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    border-radius: 50px;
+    background: rgba(255, 50, 100, 0.2);
+    border: 1px solid rgba(255, 50, 100, 0.5);
+    color: #ff3264;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    z-index: 2000;
+}
+
+.pulse {
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0 rgba(255, 50, 100, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 50, 100, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 50, 100, 0); }
+}
